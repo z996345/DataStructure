@@ -1,4 +1,4 @@
-var Cueue = function() {
+var Queue = function() {
     var container = undefined;
     var check = function() {
         if (!(container instanceof Array)) {
