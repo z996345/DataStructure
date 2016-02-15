@@ -1,20 +1,27 @@
 var Node = function() {
     var value = undefined;
-    var address = undefined;
+    var leftAddress = undefined;
+    var rightAddress = undefined;
     this.setValue = function(val) {
         value = val;
     }
     this.getValue = function() {
         return value;
     }
-    this.setAddress = function(val) {
-        address = val;
+    this.setLeftAddress = function(val) {
+        leftAddress = val;
     }
-    this.getAddress = function() {
-        return address;
+    this.getLeftAddress = function() {
+        return leftAddress;
+    }
+    this.setRightAddress = function(val) {
+        rightAddress = val;
+    }
+    this.getRightAddress = function() {
+        return rightAddress;
     }
 }
-var LinkedList = function() {
+var DoubleLinkedList = function() {
     var first = undefined;
     var buf = undefined;
     var tmp = undefined;
@@ -26,8 +33,9 @@ var LinkedList = function() {
         } else {
             var b = new Node();
             b.setValue(value);
-            buf.setAddress(b);
-            buf = buf.getAddress();
+            buf.setRightAddress(b);
+            b.setLeftAddress(buf)
+            buf = buf.getRightAddress();
         }
     }
 
@@ -36,12 +44,13 @@ var LinkedList = function() {
     }
     var traversalCallBack = function(node) {
         console.log(node.getValue());
-        if (node.getAddress() === undefined) {
+        if (node.getRightAddress() === undefined) {
             console.log("On the Buttom.");
             return;
         }
-        traversalCallBack(node.getAddress());
+        traversalCallBack(node.getRightAddress());
     }
+
     this.isEmpty = function() {
         if (first === undefined) {
             return true;
@@ -52,7 +61,8 @@ var LinkedList = function() {
     this.insert = function(index, data) {
         var node = undefined;
         if (index === 0) {
-            data.setAddress(first);
+            data.setRightAddress(first);
+            first.setLeftAddress(data);
             first = data;
             return;
         }
@@ -61,22 +71,26 @@ var LinkedList = function() {
             if (node === undefined) {
                 node = first;
             } else {
-                if (node.getAddress() === undefined) {
+                if (node.getRightAddress() === undefined) {
                     console.log("LinkedList length is less then " + index);
                     return;
                 }
-                node = node.getAddress();
+                node = node.getRightAddress();
             }
             console.log(node.getValue());
         };
-        var bufAddress = node.getAddress();
+        var bufAddress = node.getRightAddress();
 
-        data.setAddress(bufAddress);
-        node.setAddress(data);
+        data.setRightAddress(bufAddress);
+        bufAddress.setLeftAddress(data);
+
+        node.setRightAddress(data);
+        data.setLeftAddress(node);
     }
     this.deleteNode = function(index) {
         if (index === 0) {
-            first = first.getAddress();
+            first = first.getRightAddress();
+            first.setRightAddress(undefined);
             return;
         }
         var node = undefined;
@@ -84,33 +98,33 @@ var LinkedList = function() {
         for (var i = 0; i < index; i++) {
             if (node === undefined) {
                 parent = first;
-                node = parent.getAddress();
+                node = parent.getRightAddress();
             } else {
-                if (node.getAddress() === undefined) {
+                if (node.getRightAddress() === undefined) {
                     console.log("LinkedList length is less then " + index);
                     return;
                 }
                 parent = node;
-                node = node.getAddress();
+                node = node.getRightAddress();
 
             }
         };
 
-        if (node.getAddress() === undefined) {
-            parent.setAddress(undefined);
+        if (node.getRightAddress() === undefined) {
+            parent.setRightAddress(undefined);
             node = undefined;
             return;
         };
-        var chrildNode = node.getAddress();
-        parent.setAddress(chrildNode);
+        var chrildNode = node.getRightAddress();
+        parent.setRightAddress(chrildNode);
         node = undefined;
     }
     this.reverse = function() {
         var container = [];
         var node = first;
         container.push(node.getValue());
-        while (node.getAddress() !== undefined) {
-            node = node.getAddress();
+        while (node.getRightAddress() !== undefined) {
+            node = node.getRightAddress();
             container.push(node.getValue());
         }
         var length = container.length;
@@ -124,8 +138,8 @@ var LinkedList = function() {
             } else {
                 var b = new Node();
                 b.setValue(container[i]);
-                tmpNode.setAddress(b);
-                tmpNode = tmpNode.getAddress();
+                tmpNode.setRightAddress(b);
+                tmpNode = tmpNode.getRightAddress();
             }
         };
         first = tmpFirst;
@@ -133,10 +147,10 @@ var LinkedList = function() {
     this.concatenation = function(linkedList) {
         var last = undefined;
         var node = first;
-        while (node.getAddress() !== undefined) {
-            node = node.getAddress();
+        while (node.getRightAddress() !== undefined) {
+            node = node.getRightAddress();
         }
-        node.setAddress(linkedList.getFirstNode());
+        node.setRightAddress(linkedList.getFirstNode());
     }
     this.getFirstNode = function() {
         return first;
@@ -144,12 +158,12 @@ var LinkedList = function() {
 }
 
 /* Test Code
-    var b = new LinkedList();
+    var b = new DoubleLinkedList();
     for (var i = 0; i <100; i++) {
         b.add(i.toString());
     };
 
-    var b = new LinkedList();
+    var b = new DoubleLinkedList();
     for (var i = 1; i < 4; i++) {
         b.add(i.toString());
     };
