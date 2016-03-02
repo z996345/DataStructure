@@ -31,13 +31,13 @@ var Node = function() {
         parent = node;
     }
 }
-
+//補註解
 var BiTree = function() {
     var depth = 0;
     var count = 0;
     var root = undefined;
     var generation = [];
-    this.init = function(val) {
+    this.init = function(val) {//直接初始化
         root = new Node();
         root.setValue(val);
         generation[0] = [root];
@@ -76,7 +76,7 @@ var BiTree = function() {
         return true;
     }
     this.getDepth = function() {
-        return generation;
+        return generation;//改level
         // return generation.length;
     }
     this.getCount = function() {
@@ -85,7 +85,7 @@ var BiTree = function() {
     this.getRoot = function() {
         return root;
     }
-    this.traverse = function(node) {
+    this.traverse = function(node) {//補前後traverse
         if (node === undefined) {
             return;
         }
@@ -106,7 +106,7 @@ var BiTree = function() {
         }
         return;
     }
-    this.delete = function(val) {
+    this.delete = function(val) {//刪除整個tree方法
         var tmpNode = compare(val);
         var maxNode = undefined;
 
@@ -164,7 +164,7 @@ var BiTree = function() {
             return node;
         }
         if (node.getLeftNode() === undefined && node.getRightNode() === undefined) {
-            console.warn("Has not this value and return the parent node.");
+            console.warn("Has not this value and return the parent node.");//傳空值
             return node;
         }
         if (val < node.getValue()) {
@@ -237,7 +237,6 @@ var BiTree = function() {
         }
     }
 }
-
 /*
 var a = new BiTree()
 a.init(5)
@@ -247,15 +246,12 @@ a.add(2)
 a.add(4)
 a.add(7)
 a.traverse(a.getRoot())
-
 var b = a.getRoot().getRightNode();
 a.getBrother(b);
-
 var b = a.query(a.getRoot(),3);
 b.getValue();
 var b = a.query(a.getRoot(),8);
 b.getValue();
-
 var a = new BiTree()
 a.init(50)
 a.add(30)
@@ -269,7 +265,6 @@ a.add(45)
 a.traverse(a.getRoot())
 a.delete(30)
 a.traverse(a.getRoot())
-
 a.getDepth();
 a.getCount();
  */
