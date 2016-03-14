@@ -87,6 +87,9 @@ var BiTree = function() {
      */
     this.init = function() { //直接初始化
         root = new Node();
+        depth = 0;
+        count = 0;
+        generation = [];
     }
 
     /**
@@ -293,15 +296,32 @@ var BiTree = function() {
 
     /**
      * [deleteTree 刪除指定節點及子節點]
-     * @param  {[Node]} node [[傳入要刪除的節點]
+     * @param  {[Node]} node [傳入要刪除的節點]
      * @return {[bool]}      [回傳是否刪除成功，成功回傳True，不成功回傳False]
      */
     this.deleteTree = function(node) {
+        //辨識Type是否正確
+        if (!(node instanceof Node))  {
+            console.warn("param node type error.");
+            return;
+        }
+        //辨識是否為正確Node
+        if (node.getValue() === undefined) {
+            console.warn("node has no value.");
+            return;
+        }
+        //是root的話，直接初始化
+        if (node === root) {
+            this.init();
+            return true;
+        }
+        //比較是否有其值
         var tmp = compare(node.getValue());
         if (tmp[0] !== node) {
             console.warn("has not this node");
             return false;
         }
+
         var fatherNode = tmp[0].getParent();
         var height = tmp[1];
         //判斷是父節點的左側還是右側節點，並移除關聯
@@ -311,14 +331,11 @@ var BiTree = function() {
         if (fatherNode.getLeftNode() === node) {
             fatherNode.setLeftNode(undefined);   
         }
-        // to do
-        // 移除關聯，取得高度，移除同代陣列，移除節點，移除總數
-        // var tmp = compare(node.value);
-        // var index = generation[maxNodeHeight].indexOf(maxNode);
-        // generation[maxNodeHeight].splice(index, 1);
-        // checkGeneration();
-        // tmpNode.setValue(maxNode.getValue());
+        //移除節點，包含該節點以下的所有節點，
+        removeNodeTree(node, height);
+        return true;
     }
+
     /**
      * [query 由指定的節點開始查詢數值]
      * @param  {[Node]} node [傳入要查詢的節點]
@@ -363,6 +380,30 @@ var BiTree = function() {
     this.test = function() {
         //checking code use
         console.log("test");
+    }
+
+    /**
+     * [removeNodeTree 自指定節點移除二元樹]
+     * @param  {[Node]} node   [傳入要移除的節點]
+     * @param  {[Number]} height [傳入要移除的節點的深度值]
+     */
+    var removeNodeTree = function (node, height) {
+        //如果節點底下有子節點則遞迴至樹葉節點
+        if (node.getLeftNode() !== undefined) {
+            removeNodeTree(node.getLeftNode(), height+1);
+        }
+        if (node.getRightNode() !== undefined) {
+            removeNodeTree(node.getRightNode(), height+1);
+        }
+        //取得同代陣列中的index值
+        var index = generation[height].indexOf(node);
+        //將該節點切割出來
+        generation[height].splice(index, 1);
+        //重新整理同代陣列
+        checkGeneration();
+        //移除節點
+        node === undefined;
+        count -=1;
     }
 
     /**
@@ -455,13 +496,13 @@ var BiTree = function() {
 }
 /*
 var a = new BiTree()
-a.init(5)
+a.add(5)
 a.add(3)
 a.add(1)
 a.add(2)
 a.add(4)
 a.add(7)
-a.traverse(a.getRoot())
+a.inorderTraverse(a.getRoot())
 var b = a.getRoot().getRightNode();
 a.getBrother(b);
 var b = a.query(a.getRoot(),3);
@@ -469,7 +510,7 @@ b.getValue();
 var b = a.query(a.getRoot(),8);
 b.getValue();
 var a = new BiTree()
-a.init(50)
+a.add(50)
 a.add(30)
 a.add(10)
 a.add(20)
@@ -478,9 +519,23 @@ a.add(70)
 a.add(60)
 a.add(18)
 a.add(45)
-a.traverse(a.getRoot())
+a.inorderTraverse(a.getRoot())
 a.delete(30)
-a.traverse(a.getRoot())
+a.inorderTraverse(a.getRoot())
 a.getDepth();
 a.getCount();
+
+var a = new BiTree()
+a.add(50)
+a.add(30)
+a.add(10)
+a.add(20)
+a.add(40)
+a.add(70)
+a.add(60)
+a.add(18)
+a.add(45)
+var b = a.query(a.getRoot(),30)
+a.test()
+a.deleteTree(b)
  */
